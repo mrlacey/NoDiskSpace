@@ -15,12 +15,9 @@ namespace NoDiskSpace
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        // Constructor
         public MainPage()
         {
             InitializeComponent();
-
-            
         }
 
         static readonly string[] SizeSuffixes = { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
@@ -40,14 +37,24 @@ namespace NoDiskSpace
             return string.Format("{0:n1} {1}", dValue, SizeSuffixes[i]);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void UpdateAvailableFreeSpace()
         {
-            //Windows.Storage.ApplicationData.Current.ClearAsync()
-            //IsolatedStorageFile.GetUserStoreForApplication().AvailableFreeSpace;
-            // http://msdn.microsoft.com/en-us/library/windowsphone/develop/system.io.isolatedstorage.isolatedstoragefile.quota(v=vs.105).aspx
+            using (var isolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                this.DisplayedFreeDiskSpace.Text = SizeSuffix(isolatedStorage.AvailableFreeSpace);
+            }
+        }
 
-            //Debug.WriteLine(Windows.Storage.ApplicationData.Current.LocalFolder.Properties.RetrievePropertiesAsync());
-            //Debug.WriteLine("Available: " + IsolatedStorageFile.GetUserStoreForApplication().AvailableFreeSpace);
+        private void UpdateSpaceUsedByApp()
+        {
+            var used = this.GetTotalSpaceUsedByApp();
+
+            this.DisplayedSpaceUsedByApp.Text = SizeSuffix(used);
+            
+        }
+
+        private long GetTotalSpaceUsedByApp()
+        {
 
 
             long total = 0;
@@ -73,8 +80,21 @@ namespace NoDiskSpace
                 }
             }
 
-            Debug.WriteLine("Used: " + total + " bytes " + SizeSuffix(total));
-            MessageBox.Show(total + " bytes " + SizeSuffix(total));
+            return total;
+        }
+
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            //Windows.Storage.ApplicationData.Current.ClearAsync()
+            //IsolatedStorageFile.GetUserStoreForApplication().AvailableFreeSpace;
+            // http://msdn.microsoft.com/en-us/library/windowsphone/develop/system.io.isolatedstorage.isolatedstoragefile.quota(v=vs.105).aspx
+
+            //Debug.WriteLine(Windows.Storage.ApplicationData.Current.LocalFolder.Properties.RetrievePropertiesAsync());
+            //Debug.WriteLine("Available: " + IsolatedStorageFile.GetUserStoreForApplication().AvailableFreeSpace);
+
+            this.UpdateAvailableFreeSpace();
+            this.UpdateSpaceUsedByApp();
         }
 
         StringBuilder sb = null;
@@ -115,6 +135,20 @@ namespace NoDiskSpace
 
                // MessageBox.Show(store.AvailableFreeSpace.ToString());
             }
+
+            this.UpdateAvailableFreeSpace();
+            this.UpdateSpaceUsedByApp();
+        }
+
+        private void ApplicationBarIconButton2_OnClick(object sender, EventArgs e)
+        {
+            using (var store = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                store.Remove();
+            }
+
+            this.UpdateAvailableFreeSpace();
+            this.UpdateSpaceUsedByApp();
         }
     }
 }

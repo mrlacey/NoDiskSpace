@@ -47,7 +47,13 @@
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-
+            <StackPanel>
+                <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}">Free disk space</TextBlock>
+                <TextBlock x:Name="DisplayedFreeDiskSpace" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                
+                <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}">Space used by app</TextBlock>
+                <TextBlock x:Name="DisplayedSpaceUsedByApp" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+            </StackPanel>
         </Grid>
 
         <!--Uncomment to see an alignment grid to help ensure your controls are
@@ -61,7 +67,8 @@
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar>
-            <shell:ApplicationBarIconButton Text="fds" IconUri="/missing.png" Click="ApplicationBarIconButton_OnClick" />
+            <shell:ApplicationBarIconButton Text="use space" IconUri="/missing.png" Click="ApplicationBarIconButton_OnClick" />
+            <shell:ApplicationBarIconButton Text="clear" IconUri="/missing.png" Click="ApplicationBarIconButton2_OnClick" />
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
     
